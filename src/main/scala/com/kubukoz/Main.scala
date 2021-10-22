@@ -33,11 +33,13 @@ import zio.interop.catz.implicits._
 import ZIOUtils._
 
 object Main extends IOApp.Simple {
-  implicit val zioRuntime: zio.Runtime[zio.ZEnv] = zio.Runtime.default
+  given zio.Runtime[zio.ZEnv] = zio.Runtime.default
 
   def mkRoutes[F[_]: Async: Logger](
     queries: Queries[F]
-  ): Resource[F, HttpRoutes[F]] = Dispatcher[F].flatMap { implicit disp =>
+  ): Resource[F, HttpRoutes[F]] = Dispatcher[F].flatMap { disp =>
+    given Dispatcher[F] = disp
+
     graphQL(RootResolver(queries))
       .interpreterAsync[F]
       .map {
@@ -61,9 +63,9 @@ object Main extends IOApp.Simple {
       .toResource
   }
 
-  implicit val logger: Logger[IO] = Slf4jLogger.getLogger[IO]
+  given Logger[IO] = Slf4jLogger.getLogger[IO]
 
-  implicit val characters: Characters[IO] = Characters.instance[IO]
+  given Characters[IO] = Characters.instance[IO]
 
   def run: IO[Unit] =
     mkRoutes[IO](Queries.instance[IO]).flatMap { routes =>

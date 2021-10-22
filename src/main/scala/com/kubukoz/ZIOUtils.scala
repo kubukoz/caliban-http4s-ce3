@@ -16,9 +16,9 @@ import zio.interop.catz.implicits._
 object ZIOUtils {
 
   extension [F[_], A](effect: F[A])
-    def toZioTask(using d: Dispatcher[F]): zio.Task[A] = fToTask[F](d).apply(effect)
+    def toZioTask(using d: Dispatcher[F]): zio.Task[A] = fToTask[F].apply(effect)
 
-  def fToTask[F[_]](implicit d: Dispatcher[F]): F ~> zio.Task =
+  def fToTask[F[_]](using d: Dispatcher[F]): F ~> zio.Task =
     new (F ~> zio.Task) {
 
       def apply[A](fa: F[A]): zio.Task[A] = {
