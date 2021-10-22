@@ -4,7 +4,7 @@ val Versions =
     val http4s = "0.23.5"
   }
 
-ThisBuild / scalaVersion := "3.1.0-RC2"
+ThisBuild / scalaVersion := "3.1.0"
 ThisBuild / versionScheme := Some("early-semver")
 ThisBuild / githubWorkflowPublishTargetBranches := Seq()
 
